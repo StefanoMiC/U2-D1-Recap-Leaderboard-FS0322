@@ -1,0 +1,131 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .index-value {
+            margin-right: 1rem;
+        }
+
+        .user-score {
+            float: right;
+        }
+
+        .score-green {
+            background-color: palegreen;
+        }
+
+        .score-red {
+            background-color: palevioletred;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Leaderboard</h1>
+
+    <ul id="list">
+        <!-- dynamically generated <li></li>s -->
+    </ul>
+
+    <button onclick="sort()">Sort by Scores</button>
+    <script>
+        const data = [
+            { name: "Paul", score: 30 },
+            { name: "Hatem", score: 3 },
+            { name: "Komilov", score: 10 },
+            { name: "Nazami", score: 59 },
+            { name: "Tereza", score: 100 },
+            { name: "Ibrahim", score: 75 },
+            { name: "Miles", score: 90 }
+        ]
+
+        const cloneArr = Array.from(data)
+        const alphabeticalOrder = cloneArr.sort(
+            function (a, b) {
+                if (a.name < b.name) {
+                    return -1
+                }
+                if (a.name > b.name) {
+                    return 1
+                }
+                return 0
+            })
+
+        const generateListItems = function (array) {
+            const list = document.getElementById("list")
+
+            list.innerHTML = ""
+
+            if (Array.isArray(array)) {
+                for (let i = 0; i < array.length; i++) {
+                    const li = array[i]
+
+                    const listItem = document.createElement("li")
+
+                    const span1 = document.createElement("span")
+                    span1.classList.add("index-value")
+                    span1.innerText = (i + 1)
+
+                    const span2 = document.createElement("span")
+                    span2.classList.add("user-name")
+                    span2.innerText = li.name
+
+                    const span3 = document.createElement("span")
+                    const scoreStatus = li.score >= 60 ? "score-green" : "score-red"
+                    span3.classList.add("user-score", scoreStatus)
+                    span3.innerText = li.score + "%"
+
+                    listItem.append(span1, span2, span3)
+                    list.appendChild(listItem)
+                }
+            } else {
+                alert("you need to pass an array to the generateListItems function")
+            }
+        }
+
+        const sort = function () {
+            const sorted = Array.from(data).sort(function (a, b) { return b.score - a.score })
+            generateListItems(sorted)
+        }
+
+        window.onload = function () {
+
+
+            // for (const li of data) {
+            //     const listItem = document.createElement("li")
+            //     listItem.innerText = li.name + " " + li.score
+
+            //     list.appendChild(listItem)
+            // }
+
+            generateListItems(data)
+        }
+
+    </script>
+</body>
+
+</html>
