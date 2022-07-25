@@ -63,6 +63,7 @@
             margin-left: auto;
         }
 
+        /* 
         input+button {
             opacity: .5;
             pointer-events: none;
@@ -71,7 +72,7 @@
         input:checked+button {
             opacity: 1;
             pointer-events: initial;
-        }
+        } */
     </style>
 </head>
 
@@ -85,7 +86,7 @@
     <div class="checkbox-wrapper">
         <label for="checkbox-field">check me</label>
         <input type="checkbox" id="checkbox-field" onchange="checkAvailability(event)">
-        <button onclick="sort(event)">Sort by Scores</button>
+        <button onclick="sort(event)" disabled>Sort by Scores</button>
     </div>
 
 
@@ -93,22 +94,22 @@
         const LI_HEIGHT = 30
         let isSorted = false
 
-        // const checkAvailability = function (event) {
-        //     console.dir(event.target)
-        //     const checkbox = event.target
-        //     const btn = document.querySelector("button")
+        const checkAvailability = function (event) {
+            console.dir(event.target)
+            const checkbox = event.target
+            const btn = document.querySelector("button")
 
-        //     if (checkbox.checked) {
-        //         btn.removeAttribute("disabled")
-        //     } else {
-        //         btn.setAttribute("disabled", true)
-        //     }
-        // }
+            if (checkbox.checked) {
+                btn.removeAttribute("disabled")
+            } else {
+                btn.setAttribute("disabled", true)
+            }
+        }
 
         const data = [
             { name: "Paul", score: 30 },
             { name: "Hatem", score: 3 },
-            { name: "Komilov", score: 10 },
+            { name: "Komilov", score: 3 },
             { name: "Nazami", score: 59 },
             { name: "Tereza", score: 100 },
             { name: "Ibrahim", score: 75 },
@@ -171,18 +172,55 @@
             event.target.innerText = isSorted ? 'Sort Alphabetically' : 'Sort By Scores'
         }
 
+
+        // creates a new array of just score numbers
+        const cloneArrayScores = function (array) {
+            let newArr = []
+
+            for (let obj of array) {
+                newArr.push(obj.score)
+            }
+
+            return newArr
+        }
+
         const findAndMove = function (array) {
             const listItems = document.querySelectorAll("#list li")
+            let clonedArr = cloneArrayScores(array)
+            // we'll use clonedArr to get scores' position and then erase the used item, 
+            // to prevent the same value to be found twice on the same array position
 
+
+            // for (let i = 0; i < listItems.length; i++) {
+            //     const item = listItems[i];
+            //     const score = parseInt(item.dataset.score)
+
+            //     const newIndex = clonedArr.findIndex(function (prevScore) {
+            //         return prevScore === score
+            //     })
+
+            //     clonedArr[newIndex] = -1 // erasing the already used values in the array of scores
+
+            //     item.style.top = newIndex * LI_HEIGHT + "px"
+            // }
+
+            //ALTERNATIVE METHOD TO THE .findIndex() WITH JUST FOR LOOPS
             for (let i = 0; i < listItems.length; i++) {
-                const item = listItems[i];
-                const score = parseInt(item.dataset.score)
+                const listItem = listItems[i];
 
-                const newIndex = array.findIndex(function (elem) {
-                    return elem.score === score
-                })
+                let newIndex = null
 
-                item.style.top = newIndex * LI_HEIGHT + "px"
+                for (let j = 0; j < clonedArr.length; j++) {
+                    const prevScore = clonedArr[j];
+                    const currScore = parseInt(listItem.dataset.score)
+
+                    console.log(i, currScore === prevScore, currScore, prevScore) // check me on the console to understand the next line
+
+                    if (currScore === prevScore) { newIndex = j; break } // break prevents unnecessary loops after the index is already found
+
+                }
+                clonedArr[newIndex] = -1
+                if (newIndex !== null) { listItem.style.top = newIndex * LI_HEIGHT + "px" }
             }
 
             setTimeout(function () {
